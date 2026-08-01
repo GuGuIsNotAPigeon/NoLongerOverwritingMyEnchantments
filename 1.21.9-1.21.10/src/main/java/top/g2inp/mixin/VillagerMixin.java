@@ -1,7 +1,6 @@
 package top.g2inp.mixin;
 
 import net.minecraft.core.Holder;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerData;
 import net.minecraft.world.entity.npc.VillagerProfession;
@@ -35,7 +34,7 @@ public abstract class VillagerMixin {
 	}
 
 	@Inject(method = "updateTrades", at = @At("TAIL"))
-	private void nlome$recheckProtection(ServerLevel serverLevel, CallbackInfo ci) {
+	private void nlome$recheckProtection(CallbackInfo ci) {
 		ProtectionHandler.onTradesUpdated((Villager) (Object) this);
 	}
 }
