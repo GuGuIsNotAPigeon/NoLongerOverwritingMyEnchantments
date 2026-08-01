@@ -1,0 +1,15 @@
+{
+  "screen.nlome.config": "不再刷过我的附魔书 - 收藏设置",
+  "screen.nlome.search": "搜索附魔...",
+  "screen.nlome.threshold": "破坏工作方块次数(达到后刷新交易):",
+  "button.nlome.save": "保存",
+  "button.nlome.cancel": "取消",
+  "button.nlome.select": "收藏",
+  "button.nlome.selected": "已收藏",
+  "button.nlome.sort.az": "A-Z",
+  "button.nlome.sort.none": "默认顺序",
+  "message.nlome.protected": "这个村民有你收藏的附魔书：%s",
+  "message.nlome.refreshed": "村民交易已刷新",
+  "toast.nlome.intercepted.title": "交易刷新已拦截",
+  "toast.nlome.intercepted": "收藏的附魔书已保护(%s/%s)"
+}

@@ -21,6 +21,7 @@ dependencies {
 
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+	compileOnly "org.jspecify:jspecify:1.0.0"
 }
 
 processResources {
