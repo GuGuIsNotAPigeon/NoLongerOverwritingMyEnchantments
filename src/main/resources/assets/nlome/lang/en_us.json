@@ -1,0 +1,15 @@
+{
+  "screen.nlome.config": "No Longer Overwriting My Enchantments - Favorites",
+  "screen.nlome.search": "Search enchantments...",
+  "screen.nlome.threshold": "Workstation breaks until refresh:",
+  "button.nlome.save": "Save",
+  "button.nlome.cancel": "Cancel",
+  "button.nlome.select": "Select",
+  "button.nlome.selected": "Selected",
+  "button.nlome.sort.az": "A-Z",
+  "button.nlome.sort.none": "Default order",
+  "message.nlome.protected": "This villager has your favorited enchanted book: %s",
+  "message.nlome.refreshed": "This villager refreshed their trades",
+  "toast.nlome.intercepted.title": "Trade refresh blocked",
+  "toast.nlome.intercepted": "Favorited enchanted book protected (%s/%s)"
+}
