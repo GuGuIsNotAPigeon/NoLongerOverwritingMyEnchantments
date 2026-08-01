@@ -200,7 +200,9 @@ public final class ProtectionHandler {
 				continue;
 			}
 
-			villager.setAttached(PROTECTION, new ProtectionData(station, favoriteOffer.copy(), 0));
+			ProtectionData existing = villager.getAttached(PROTECTION);
+			int breaks = existing == null ? 0 : existing.breaks();
+			villager.setAttached(PROTECTION, new ProtectionData(station, favoriteOffer.copy(), breaks));
 			PROTECTED_STATIONS.put(station, villager.getUUID());
 			Component bookName = bookName(serverLevel, favoriteOffer);
 			serverPlayer.sendSystemMessage(Component.translatable("message.nlome.protected", bookName));
