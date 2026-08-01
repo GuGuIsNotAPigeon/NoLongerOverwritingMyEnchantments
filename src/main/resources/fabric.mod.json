@@ -33,7 +33,7 @@
 		"minecraft": "~1.21.11",
 		"java": ">=21",
 		"fabric-api": "*",
-		"modmenu": ">=17.0.0"
+		"modmenu": "*"
 	},
 	"suggests": {
 		"trade-cycling": "*"

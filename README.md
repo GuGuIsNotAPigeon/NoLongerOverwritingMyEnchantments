@@ -10,11 +10,15 @@
 
 ## 前置依赖
 
-- [Fabric API](https://modrinth.com/mod/fabric-api)
-- [Mod Menu](https://modrinth.com/mod/modmenu)
-- Minecraft 1.21.11 · Fabric Loader >= 0.19.3 · Java 21
+- [Fabric API](https://modrinth.com/mod/fabric-api)（任意版本）
+- [Mod Menu](https://modrinth.com/mod/modmenu)（任意版本）
+- Fabric Loader · Java 21
 
 可选：Trade Cycling（开启其交易拦截集成）。
+
+## 支持版本
+
+当前支持 Minecraft 1.21.11，后续将适配更多游戏版本。
 
 ## 构建
 
