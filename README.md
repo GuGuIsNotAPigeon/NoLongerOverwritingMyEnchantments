@@ -8,12 +8,6 @@
 - **工作站保护**：村民贩卖你收藏的附魔书时，破坏其工作站不会立刻刷新掉这本附魔书，而会重设其职业或刷新交易（可配置次数阈值）。
 - **交易刷新拦截**：拦截通过快捷键/按钮触发的村民交易刷新（如 Trade Cycling），只要村民还在出售收藏的附魔书，刷新会被阻止，并在交易界面以 toast 提示剩余次数；达到阈值后放行刷新。
 
-## 前置依赖
-
-- [Fabric API](https://modrinth.com/mod/fabric-api)（任意版本）
-- [Mod Menu](https://modrinth.com/mod/modmenu)（任意版本）
-- Fabric Loader · Java 21
-
 可选：Trade Cycling（开启其交易拦截集成）。
 
 ## 支持版本
