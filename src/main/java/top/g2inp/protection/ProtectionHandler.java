@@ -129,7 +129,9 @@ public final class ProtectionHandler {
 				GlobalPos station = villager.getBrain().getMemory(MemoryModuleType.JOB_SITE)
 					.map(site -> GlobalPos.of(site.dimension(), site.pos()))
 					.orElse(GlobalPos.of(serverLevel.dimension(), villager.blockPosition()));
-				villager.setAttached(PROTECTION, new ProtectionData(station, favoriteOffer.copy(), 0));
+			ProtectionData existing = villager.getAttached(PROTECTION);
+			int breaks = existing == null ? 0 : existing.breaks();
+			villager.setAttached(PROTECTION, new ProtectionData(station, favoriteOffer.copy(), breaks));
 				PROTECTED_STATIONS.put(station, villager.getUUID());
 			} else if (!favoritedEnchantment(favoriteOffer.getResult(), FavoritesManager.get().getFavorites())
 				.equals(favoritedEnchantment(data.savedOffer().getResult(), FavoritesManager.get().getFavorites()))) {
