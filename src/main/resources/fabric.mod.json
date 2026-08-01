@@ -9,7 +9,8 @@
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://github.com/GuGuIsNotAPigeon/NoLongerOverwritingMyEnchantments",
+		"issues": "https://github.com/GuGuIsNotAPigeon/NoLongerOverwritingMyEnchantments/issues"
 	},
 	"license": "MIT",
 	"icon": "assets/nlome/icon.png",
