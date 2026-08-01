@@ -55,7 +55,7 @@ jobs:
           MOD_VERSION=$(sed -n 's/^mod_version=//p' gradle.properties)
           for f in build/libs/*.jar; do
             [[ "$f" == *-sources.jar ]] && continue
-            mv "$f" "build/libs/${MOD_NAME}|${MC_VERSION}|fabric|${MOD_VERSION}.jar"
+            mv "$f" "build/libs/${MOD_NAME}-${MC_VERSION}-fabric-${MOD_VERSION}.jar"
           done
       - name: create release
         uses: softprops/action-gh-release@v2
