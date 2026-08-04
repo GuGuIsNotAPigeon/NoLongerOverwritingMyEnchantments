@@ -1,5 +1,6 @@
 {
   "screen.nlome.config": "不再刷过我的附魔书 - 收藏设置",
+  "message.nlome.locked": "该村民交易已锁定，请勿破坏工作方块！",
   "screen.nlome.search": "搜索附魔...",
   "screen.nlome.threshold": "破坏工作方块次数(达到后刷新交易):",
   "button.nlome.save": "保存",

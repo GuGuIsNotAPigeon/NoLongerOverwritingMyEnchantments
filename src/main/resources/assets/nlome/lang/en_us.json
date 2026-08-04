@@ -1,5 +1,6 @@
 {
   "screen.nlome.config": "No Longer Overwriting My Enchantments - Favorites",
+  "message.nlome.locked": "This villager's trades are locked. Do not break their workstation!",
   "screen.nlome.search": "Search enchantments...",
   "screen.nlome.threshold": "Workstation breaks until refresh:",
   "button.nlome.save": "Save",

@@ -152,6 +152,15 @@ public final class ProtectionHandler {
 
 		GlobalPos station = GlobalPos.of(serverLevel.dimension(), pos.immutable());
 
+		UUID boundVillagerUuid = PROTECTED_STATIONS.get(station);
+		if (boundVillagerUuid != null
+				&& serverLevel.getEntity(boundVillagerUuid) instanceof Villager boundVillager
+				&& ProtectionHandler.isProtected(boundVillager)) {
+			serverPlayer.sendSystemMessage(Component.translatable("message.nlome.locked"));
+			glowVillager(boundVillager);
+			return;
+		}
+
 		UUID protectedVillagerUuid = PROTECTED_STATIONS.remove(station);
 		if (protectedVillagerUuid != null) {
 			if (serverLevel.getEntity(protectedVillagerUuid) instanceof Villager villager) {
