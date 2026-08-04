@@ -1,4 +1,4 @@
-package top.g2inp.client;
+package top.g2inp.nlome.client;
 
 import java.text.Collator;
 import java.util.Comparator;
@@ -25,9 +25,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.enchantment.Enchantment;
 
-import top.g2inp.config.ClientFavorites;
-import top.g2inp.config.FavoritesManager;
-import top.g2inp.network.ModPayloads.SetConfigPayload;
+import top.g2inp.nlome.config.ClientFavorites;
+import top.g2inp.nlome.config.FavoritesManager;
+import top.g2inp.nlome.network.ModPayloads.SetConfigPayload;
 
 @Environment(EnvType.CLIENT)
 public class ConfigScreen extends Screen {

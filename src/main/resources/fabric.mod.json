@@ -17,13 +17,13 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"top.g2inp.NoLongerOverwritingMyEnchantments"
+			"top.g2inp.nlome.NoLongerOverwritingMyEnchantments"
 		],
 		"client": [
-			"top.g2inp.NoLongerOverwritingMyEnchantmentsClient"
+			"top.g2inp.nlome.NoLongerOverwritingMyEnchantmentsClient"
 		],
 		"modmenu": [
-			"top.g2inp.ModMenuIntegration"
+			"top.g2inp.nlome.ModMenuIntegration"
 		]
 	},
 	"mixins": [

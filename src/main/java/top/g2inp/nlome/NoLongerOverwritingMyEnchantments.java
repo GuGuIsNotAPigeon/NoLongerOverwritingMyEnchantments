@@ -1,18 +1,19 @@
-package top.g2inp;
+package top.g2inp.nlome;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+//import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceLocation;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import top.g2inp.config.FavoritesManager;
-import top.g2inp.network.ModPayloads;
-import top.g2inp.network.ModPayloads.SetConfigPayload;
-import top.g2inp.network.ModPayloads.SyncConfigPayload;
-import top.g2inp.protection.ProtectionHandler;
+import top.g2inp.nlome.config.FavoritesManager;
+import top.g2inp.nlome.network.ModPayloads;
+import top.g2inp.nlome.network.ModPayloads.SetConfigPayload;
+import top.g2inp.nlome.network.ModPayloads.SyncConfigPayload;
+import top.g2inp.nlome.protection.ProtectionHandler;
 
 public class NoLongerOverwritingMyEnchantments implements ModInitializer {
 	public static final String MOD_ID = "nlome";

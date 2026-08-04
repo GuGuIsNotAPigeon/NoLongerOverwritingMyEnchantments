@@ -1,6 +1,6 @@
 {
 	"required": true,
-	"package": "top.g2inp.mixin",
+	"package": "top.g2inp.nlome.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
 		"VillagerMixin"
