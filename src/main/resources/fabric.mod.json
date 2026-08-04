@@ -1,14 +1,14 @@
 {
 	"schemaVersion": 1,
 	"id": "nlome",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"name": "No Longer Overwriting My Enchantments.",
 	"description": "不再刷过我的附魔书!",
 	"authors": [
 		"G2INP"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
+		"homepage": "https://github.com/GuGuIsNotAPigeon/NoLongerOverwritingMyEnchantments",
 		"sources": "https://github.com/GuGuIsNotAPigeon/NoLongerOverwritingMyEnchantments",
 		"issues": "https://github.com/GuGuIsNotAPigeon/NoLongerOverwritingMyEnchantments/issues"
 	},
@@ -17,13 +17,13 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"top.g2inp.NoLongerOverwritingMyEnchantments"
+			"top.g2inp.nlome.NoLongerOverwritingMyEnchantments"
 		],
 		"client": [
-			"top.g2inp.NoLongerOverwritingMyEnchantmentsClient"
+			"top.g2inp.nlome.NoLongerOverwritingMyEnchantmentsClient"
 		],
 		"modmenu": [
-			"top.g2inp.ModMenuIntegration"
+			"top.g2inp.nlome.ModMenuIntegration"
 		]
 	},
 	"mixins": [

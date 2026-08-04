@@ -1,12 +1,12 @@
-package top.g2inp;
+package top.g2inp.nlome;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.network.chat.Component;
 
-import top.g2inp.config.ClientFavorites;
-import top.g2inp.network.ModPayloads;
+import top.g2inp.nlome.config.ClientFavorites;
+import top.g2inp.nlome.network.ModPayloads;
 
 public class NoLongerOverwritingMyEnchantmentsClient implements ClientModInitializer {
 	@Override

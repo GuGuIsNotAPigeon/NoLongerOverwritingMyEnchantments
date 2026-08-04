@@ -1,4 +1,4 @@
-package top.g2inp.protection;
+package top.g2inp.nlome.protection;
 
 import java.util.HashMap;
 import java.util.List;
@@ -41,9 +41,9 @@ import net.minecraft.world.phys.AABB;
 
 import org.jspecify.annotations.Nullable;
 
-import top.g2inp.NoLongerOverwritingMyEnchantments;
-import top.g2inp.config.FavoritesManager;
-import top.g2inp.network.ModPayloads.InterceptedPayload;
+import top.g2inp.nlome.NoLongerOverwritingMyEnchantments;
+import top.g2inp.nlome.config.FavoritesManager;
+import top.g2inp.nlome.network.ModPayloads.InterceptedPayload;
 
 public final class ProtectionHandler {
 	private static final int SEARCH_RADIUS = 16;

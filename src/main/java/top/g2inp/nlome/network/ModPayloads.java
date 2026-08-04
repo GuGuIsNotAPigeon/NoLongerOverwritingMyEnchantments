@@ -1,4 +1,4 @@
-package top.g2inp.network;
+package top.g2inp.nlome.network;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.enchantment.Enchantment;
 
-import top.g2inp.NoLongerOverwritingMyEnchantments;
+import top.g2inp.nlome.NoLongerOverwritingMyEnchantments;
 
 public final class ModPayloads {
 	private static final StreamCodec<ByteBuf, ResourceKey<Enchantment>> FAVORITE_CODEC = ResourceKey
