@@ -1,4 +1,4 @@
-package top.g2inp.mixin;
+package top.g2inp.nlome.mixin;
 
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import top.g2inp.protection.ProtectionHandler;
+import top.g2inp.nlome.protection.ProtectionHandler;
 
 @Mixin(Villager.class)
 public abstract class VillagerMixin {

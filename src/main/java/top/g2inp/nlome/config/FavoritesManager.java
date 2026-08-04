@@ -1,4 +1,4 @@
-package top.g2inp.config;
+package top.g2inp.nlome.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -20,7 +20,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.enchantment.Enchantment;
 
-import top.g2inp.NoLongerOverwritingMyEnchantments;
+import top.g2inp.nlome.NoLongerOverwritingMyEnchantments;
 
 public final class FavoritesManager {
 	public static final int DEFAULT_BREAK_THRESHOLD = 3;

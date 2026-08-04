@@ -10,6 +10,7 @@
   "button.nlome.sort.none": "Default order",
   "message.nlome.protected": "This villager has your favorited enchanted book: %s",
   "message.nlome.refreshed": "This villager refreshed their trades",
+  "message.nlome.locked": "This villager's trades are locked. Do not break their workstation!",
   "toast.nlome.intercepted.title": "Trade refresh blocked",
   "toast.nlome.intercepted": "Favorited enchanted book protected (%s/%s)"
 }

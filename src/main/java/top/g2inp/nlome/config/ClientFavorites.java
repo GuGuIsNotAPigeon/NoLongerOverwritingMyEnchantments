@@ -1,4 +1,4 @@
-package top.g2inp.config;
+package top.g2inp.nlome.config;
 
 import java.util.List;
 

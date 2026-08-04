@@ -10,6 +10,7 @@
   "button.nlome.sort.none": "默认顺序",
   "message.nlome.protected": "这个村民有你收藏的附魔书：%s",
   "message.nlome.refreshed": "村民交易已刷新",
+  "message.nlome.locked": "该村民交易已锁定，请勿破坏工作方块！",
   "toast.nlome.intercepted.title": "交易刷新已拦截",
   "toast.nlome.intercepted": "收藏的附魔书已保护(%s/%s)"
 }
