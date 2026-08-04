@@ -150,17 +150,12 @@ public final class ProtectionHandler {
 
 		GlobalPos station = GlobalPos.of(serverLevel.dimension(), pos.immutable());
 
-		Villager boundVillager = serverLevel.getEntities(
-			EntityTypeTest.forClass(Villager.class),
-			new AABB(pos).inflate(SEARCH_RADIUS),
-			villager -> villager.getBrain().getMemory(MemoryModuleType.JOB_SITE)
-				.map(jobSite -> jobSite.dimension().equals(serverLevel.dimension()) && jobSite.pos().equals(pos))
-				.orElse(false))
-			.stream()
-			.findFirst()
-			.orElse(null);
-		if (boundVillager != null && ProtectionHandler.isProtected(boundVillager)) {
+		UUID boundVillagerUuid = PROTECTED_STATIONS.get(station);
+		if (boundVillagerUuid != null
+				&& serverLevel.getEntity(boundVillagerUuid) instanceof Villager boundVillager
+				&& ProtectionHandler.isProtected(boundVillager)) {
 			serverPlayer.sendSystemMessage(Component.translatable("message.nlome.locked"));
+			glowVillager(boundVillager);
 			return;
 		}
 
