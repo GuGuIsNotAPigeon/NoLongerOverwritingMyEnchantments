@@ -153,7 +153,8 @@ public final class ProtectionHandler {
 		UUID boundVillagerUuid = PROTECTED_STATIONS.get(station);
 		if (boundVillagerUuid != null
 				&& serverLevel.getEntity(boundVillagerUuid) instanceof Villager boundVillager
-				&& ProtectionHandler.isProtected(boundVillager)) {
+				&& ProtectionHandler.isProtected(boundVillager)
+				&& boundVillager.getVillagerXp() > 0) {
 			serverPlayer.sendSystemMessage(Component.translatable("message.nlome.locked"));
 			glowVillager(boundVillager);
 			return;
