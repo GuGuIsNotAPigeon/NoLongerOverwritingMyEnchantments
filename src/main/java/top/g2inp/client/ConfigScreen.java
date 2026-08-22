@@ -1,10 +1,11 @@
 package top.g2inp.client;
 
 import java.text.Collator;
-import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import net.fabricmc.api.EnvType;
@@ -193,9 +194,43 @@ public class ConfigScreen extends Screen {
 	private static class FavoriteList extends ObjectSelectionList<FavoriteRow> {
 		private static final Collator CJK_COLLATOR = Collator.getInstance(Locale.CHINA);
 
-		private static final Comparator<Holder.Reference<Enchantment>> BY_NAME = (a, b) -> {
-			String left = Language.getInstance().getOrDefault(a.value().description().getString());
-			String right = Language.getInstance().getOrDefault(b.value().description().getString());
+		private final ConfigScreen screen;
+		private final List<Holder.Reference<Enchantment>> enchantments;
+		private final Map<Holder.Reference<Enchantment>, String> translatedNames;
+
+		FavoriteList(ConfigScreen screen, int width, int height, int y, int itemHeight) {
+			super(Minecraft.getInstance(), width, height, y, itemHeight);
+			this.screen = screen;
+			this.enchantments = enchantmentLookup().listElements().toList();
+			this.translatedNames = new HashMap<>(this.enchantments.size());
+			Language language = Language.getInstance();
+			for (Holder.Reference<Enchantment> holder : this.enchantments) {
+				this.translatedNames.put(holder, language.getOrDefault(holder.value().description().getString()));
+			}
+		}
+
+		void rebuild(String filter) {
+			this.clearEntries();
+			List<Holder.Reference<Enchantment>> entries = this.enchantments;
+			if (this.screen.sortByName) {
+				entries = this.enchantments.stream().sorted(this::compareByName).toList();
+			}
+
+			String query = filter.trim().toLowerCase();
+			for (Holder.Reference<Enchantment> holder : entries) {
+				String name = this.translatedNames.get(holder);
+				String id = holder.key().location().toString();
+				if (!query.isEmpty() && !name.toLowerCase().contains(query) && !id.toLowerCase().contains(query)) {
+					continue;
+				}
+
+				this.addEntry(new FavoriteRow(this.screen, holder.key(), holder));
+			}
+		}
+
+		private int compareByName(Holder.Reference<Enchantment> a, Holder.Reference<Enchantment> b) {
+			String left = this.translatedNames.get(a);
+			String right = this.translatedNames.get(b);
 			int leftBucket = nameBucket(left);
 			int rightBucket = nameBucket(right);
 			if (leftBucket != rightBucket) {
@@ -210,7 +245,7 @@ public class ConfigScreen extends Screen {
 				}
 				default -> left.compareTo(right);
 			};
-		};
+		}
 
 		private static int nameBucket(String name) {
 			if (name.isEmpty()) {
@@ -223,34 +258,6 @@ public class ConfigScreen extends Screen {
 			}
 
 			return Character.UnicodeScript.of(codePoint) == Character.UnicodeScript.HAN ? 1 : 2;
-		}
-
-		private final ConfigScreen screen;
-		private final List<Holder.Reference<Enchantment>> enchantments;
-
-		FavoriteList(ConfigScreen screen, int width, int height, int y, int itemHeight) {
-			super(Minecraft.getInstance(), width, height, y, itemHeight);
-			this.screen = screen;
-			this.enchantments = enchantmentLookup().listElements().toList();
-		}
-
-		void rebuild(String filter) {
-			this.clearEntries();
-			List<Holder.Reference<Enchantment>> entries = this.enchantments;
-			if (this.screen.sortByName) {
-				entries = this.enchantments.stream().sorted(BY_NAME).toList();
-			}
-
-			String query = filter.trim().toLowerCase();
-			for (Holder.Reference<Enchantment> holder : entries) {
-				String name = Language.getInstance().getOrDefault(holder.value().description().getString());
-				String id = holder.key().location().toString();
-				if (!query.isEmpty() && !name.toLowerCase().contains(query) && !id.toLowerCase().contains(query)) {
-					continue;
-				}
-
-				this.addEntry(new FavoriteRow(this.screen, holder.key(), holder));
-			}
 		}
 	}
 
