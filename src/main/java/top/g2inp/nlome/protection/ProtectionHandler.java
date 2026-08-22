@@ -9,7 +9,6 @@ import java.util.UUID;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.core.BlockPos;
@@ -41,9 +40,9 @@ import net.minecraft.world.phys.AABB;
 
 import org.jspecify.annotations.Nullable;
 
-import top.g2inp.NoLongerOverwritingMyEnchantments;
-import top.g2inp.config.FavoritesManager;
-import top.g2inp.network.ModPayloads.InterceptedPayload;
+import top.g2inp.nlome.NoLongerOverwritingMyEnchantments;
+import top.g2inp.nlome.client.ToastHelper;
+import top.g2inp.nlome.config.FavoritesManager;
 
 public final class ProtectionHandler {
 	private static final int SEARCH_RADIUS = 16;
@@ -111,8 +110,8 @@ public final class ProtectionHandler {
 		villager.setAttached(PROTECTION, new ProtectionData(station, favoriteOffer.copy(), breaks));
 		PROTECTED_STATIONS.put(station, villager.getUUID());
 		Player player = villager.getTradingPlayer();
-		if (player instanceof ServerPlayer serverPlayer) {
-			ServerPlayNetworking.send(serverPlayer, new InterceptedPayload(breaks, breakThreshold - 1));
+		if (player instanceof ServerPlayer) {
+			ToastHelper.showIntercepted(breaks, breakThreshold - 1);
 		}
 		return true;
 	}
