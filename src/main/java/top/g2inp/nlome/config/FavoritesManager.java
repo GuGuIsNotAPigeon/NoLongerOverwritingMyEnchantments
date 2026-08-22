@@ -95,10 +95,6 @@ public final class FavoritesManager {
 		return this.favorites;
 	}
 
-	public boolean isFavorite(ResourceKey<Enchantment> enchantment) {
-		return this.favorites.contains(enchantment);
-	}
-
 	public int getBreakThreshold() {
 		return this.breakThreshold;
 	}
