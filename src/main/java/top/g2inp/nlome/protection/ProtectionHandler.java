@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
@@ -124,16 +122,15 @@ public final class ProtectionHandler {
 		ProtectionData data = villager.getAttached(PROTECTION);
 		MerchantOffer favoriteOffer = findFavoritedOffer(villager);
 		if (favoriteOffer != null) {
+			List<ResourceKey<Enchantment>> favorites = FavoritesManager.get().getFavorites();
 			if (data == null) {
 				GlobalPos station = villager.getBrain().getMemory(MemoryModuleType.JOB_SITE)
 					.map(site -> GlobalPos.of(site.dimension(), site.pos()))
 					.orElse(GlobalPos.of(serverLevel.dimension(), villager.blockPosition()));
-			ProtectionData existing = villager.getAttached(PROTECTION);
-			int breaks = existing == null ? 0 : existing.breaks();
-			villager.setAttached(PROTECTION, new ProtectionData(station, favoriteOffer.copy(), breaks));
+				villager.setAttached(PROTECTION, new ProtectionData(station, favoriteOffer.copy(), 0));
 				PROTECTED_STATIONS.put(station, villager.getUUID());
-			} else if (!favoritedEnchantment(favoriteOffer.getResult(), FavoritesManager.get().getFavorites())
-				.equals(favoritedEnchantment(data.savedOffer().getResult(), FavoritesManager.get().getFavorites()))) {
+			} else if (!favoritedEnchantment(favoriteOffer.getResult(), favorites)
+				.equals(favoritedEnchantment(data.savedOffer().getResult(), favorites))) {
 				villager.setAttached(PROTECTION, new ProtectionData(data.station(), favoriteOffer.copy(), data.breaks()));
 			}
 		} else if (data != null) {
@@ -254,8 +251,8 @@ public final class ProtectionHandler {
 		}
 
 		ItemEnchantments enchantments = stack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
-		for (Object2IntMap.Entry<Holder<Enchantment>> entry : enchantments.entrySet()) {
-			Optional<ResourceKey<Enchantment>> enchantmentKey = entry.getKey().unwrapKey();
+		for (Holder<Enchantment> holder : enchantments.keySet()) {
+			Optional<ResourceKey<Enchantment>> enchantmentKey = holder.unwrapKey();
 			if (enchantmentKey.isPresent() && favorites.contains(enchantmentKey.get())) {
 				return enchantmentKey.get();
 			}
