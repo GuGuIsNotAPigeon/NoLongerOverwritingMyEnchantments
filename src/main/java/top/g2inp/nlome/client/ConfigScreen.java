@@ -9,8 +9,8 @@ import java.util.Set;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
+import net.minecraft.locale.Language;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -25,9 +25,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.enchantment.Enchantment;
 
-import top.g2inp.nlome.config.ClientFavorites;
 import top.g2inp.nlome.config.FavoritesManager;
-import top.g2inp.nlome.network.ModPayloads.SetConfigPayload;
 
 @Environment(EnvType.CLIENT)
 public class ConfigScreen extends Screen {
@@ -59,14 +57,9 @@ public class ConfigScreen extends Screen {
 	protected void init() {
 		super.init();
 		this.selected.clear();
-		if (this.minecraft.getConnection() != null) {
-			this.selected.addAll(ClientFavorites.get());
-			this.breakThreshold = ClientFavorites.getBreakThreshold();
-		} else {
-			FavoritesManager.ConfigData data = FavoritesManager.loadData();
-			this.selected.addAll(data.favorites());
-			this.breakThreshold = data.breakThreshold();
-		}
+		FavoritesManager.ConfigData data = FavoritesManager.loadData();
+		this.selected.addAll(data.favorites());
+		this.breakThreshold = data.breakThreshold();
 
 		int sortButtonWidth = 100;
 		int sortButtonX = this.width - sortButtonWidth - 20;
@@ -159,13 +152,8 @@ public class ConfigScreen extends Screen {
 
 	private void save() {
 		List<ResourceKey<Enchantment>> favorites = List.copyOf(this.selected);
-		if (this.minecraft.getConnection() != null) {
-			ClientPlayNetworking.send(new SetConfigPayload(favorites, this.breakThreshold));
-		} else {
-			FavoritesManager.saveData(new FavoritesManager.ConfigData(favorites, this.breakThreshold));
-		}
-
-		ClientFavorites.set(favorites, this.breakThreshold);
+		FavoritesManager.get().setFavorites(favorites);
+		FavoritesManager.get().setBreakThreshold(this.breakThreshold);
 		this.onClose();
 	}
 
@@ -205,8 +193,8 @@ public class ConfigScreen extends Screen {
 		private static final Collator CJK_COLLATOR = Collator.getInstance(Locale.CHINA);
 
 		private static final Comparator<Holder.Reference<Enchantment>> BY_NAME = (a, b) -> {
-			String left = a.value().description().getString();
-			String right = b.value().description().getString();
+			String left = Language.getInstance().getOrDefault(a.value().description().getString());
+			String right = Language.getInstance().getOrDefault(b.value().description().getString());
 			int leftBucket = nameBucket(left);
 			int rightBucket = nameBucket(right);
 			if (leftBucket != rightBucket) {
@@ -262,7 +250,7 @@ public class ConfigScreen extends Screen {
 
 			String query = filter.trim().toLowerCase();
 			for (Holder.Reference<Enchantment> holder : entries) {
-				String name = holder.value().description().getString();
+				String name = Language.getInstance().getOrDefault(holder.value().description().getString());
 				String id = holder.key().location().toString();
 				if (!query.isEmpty() && !name.toLowerCase().contains(query) && !id.toLowerCase().contains(query)) {
 					continue;
