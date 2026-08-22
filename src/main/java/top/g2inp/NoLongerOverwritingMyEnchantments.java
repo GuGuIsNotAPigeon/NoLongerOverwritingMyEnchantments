@@ -1,17 +1,11 @@
 package top.g2inp;
 
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.resources.ResourceLocation;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import top.g2inp.config.FavoritesManager;
-import top.g2inp.network.ModPayloads;
-import top.g2inp.network.ModPayloads.SetConfigPayload;
-import top.g2inp.network.ModPayloads.SyncConfigPayload;
 import top.g2inp.protection.ProtectionHandler;
 
 public class NoLongerOverwritingMyEnchantments implements ModInitializer {
@@ -21,17 +15,7 @@ public class NoLongerOverwritingMyEnchantments implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-
-		ModPayloads.register();
 		ProtectionHandler.register();
-		ServerPlayNetworking.registerGlobalReceiver(SetConfigPayload.TYPE, (payload, context) -> {
-			FavoritesManager.get().setFavorites(payload.favorites());
-			FavoritesManager.get().setBreakThreshold(payload.breakThreshold());
-		});
-		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
-			sender.sendPacket(new SyncConfigPayload(
-				FavoritesManager.get().getFavorites(),
-				FavoritesManager.get().getBreakThreshold())));
 
 		LOGGER.info("Hello Fabric world!");
 	}
