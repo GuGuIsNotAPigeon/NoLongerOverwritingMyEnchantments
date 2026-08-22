@@ -16,7 +16,7 @@ import java.util.List;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.enchantment.Enchantment;
 
@@ -71,7 +71,7 @@ public final class FavoritesManager {
 			JsonObject object = new JsonObject();
 			JsonArray array = new JsonArray();
 			for (ResourceKey<Enchantment> enchantment : data.favorites()) {
-				array.add(enchantment.identifier().toString());
+				array.add(enchantment.location().toString());
 			}
 
 			object.add("favorites", array);
@@ -85,7 +85,7 @@ public final class FavoritesManager {
 	private static List<ResourceKey<Enchantment>> parseFavorites(JsonArray array) {
 		List<ResourceKey<Enchantment>> entries = new ArrayList<>();
 		for (JsonElement element : array) {
-			entries.add(ResourceKey.create(Registries.ENCHANTMENT, Identifier.parse(element.getAsString())));
+			entries.add(ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.parse(element.getAsString())));
 		}
 
 		return List.copyOf(entries);
