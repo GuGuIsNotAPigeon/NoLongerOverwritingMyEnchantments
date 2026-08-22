@@ -244,7 +244,7 @@ public class ConfigScreen extends Screen {
 			String query = filter.trim().toLowerCase();
 			for (Holder.Reference<Enchantment> holder : entries) {
 String name = Language.getInstance().getOrDefault(holder.value().description().getString());
-				String id = holder.key().location().toString();
+				String id = holder.key().identifier().toString();
 				if (!query.isEmpty() && !name.toLowerCase().contains(query) && !id.toLowerCase().contains(query)) {
 					continue;
 				}
