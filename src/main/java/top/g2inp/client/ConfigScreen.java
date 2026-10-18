@@ -49,6 +49,8 @@ public class ConfigScreen extends Screen {
 	private Button sortButton;
 	private boolean sortByName = true;
 	private int breakThreshold = FavoritesManager.DEFAULT_BREAK_THRESHOLD;
+	private String searchText = "";
+	private boolean initialized;
 
 	public ConfigScreen(Screen parent) {
 		super(Component.translatable("screen.nlome.config"));
@@ -58,10 +60,13 @@ public class ConfigScreen extends Screen {
 	@Override
 	protected void init() {
 		super.init();
-		this.selected.clear();
-		FavoritesManager.ConfigData data = FavoritesManager.loadData();
-		this.selected.addAll(data.favorites());
-		this.breakThreshold = data.breakThreshold();
+		if (!this.initialized) {
+			this.selected.clear();
+			FavoritesManager.ConfigData data = FavoritesManager.loadData();
+			this.selected.addAll(data.favorites());
+			this.breakThreshold = data.breakThreshold();
+			this.initialized = true;
+		}
 
 		int sortButtonWidth = 100;
 		int sortButtonX = this.width - sortButtonWidth - 20;
@@ -69,14 +74,14 @@ public class ConfigScreen extends Screen {
 		this.searchBox = this.addRenderableWidget(new EditBox(
 			this.font, 20, SEARCH_TOP, sortButtonX - 30, 20, searchLabel));
 		this.searchBox.setHint(searchLabel);
-		this.searchBox.setResponder(this::applySearch);
+		this.searchBox.setResponder(this::onSearchChanged);
 
 		this.sortButton = this.addRenderableWidget(Button.builder(
 			Component.translatable("button.nlome.sort.az"),
 			button -> {
 				this.sortByName = !this.sortByName;
 				button.setMessage(this.sortLabel());
-				this.applySearch(this.searchBox.getValue());
+				this.onSearchChanged(this.searchBox.getValue());
 			})
 			.bounds(sortButtonX, SEARCH_TOP, sortButtonWidth, 20)
 			.build());
@@ -88,17 +93,7 @@ public class ConfigScreen extends Screen {
 			this.font, thresholdBoxX, THRESHOLD_TOP, 40, 20, thresholdLabel));
 		this.thresholdBox.setFilter(text -> text.chars().allMatch(Character::isDigit));
 		this.thresholdBox.setMaxLength(2);
-		this.thresholdBox.setResponder(text -> {
-			if (text.isEmpty()) {
-				this.breakThreshold = THRESHOLD_MIN;
-				return;
-			}
-
-			try {
-				this.breakThreshold = Math.max(THRESHOLD_MIN, Math.min(THRESHOLD_MAX, Integer.parseInt(text)));
-			} catch (NumberFormatException exception) {
-			}
-		});
+		this.thresholdBox.setResponder(this::onThresholdChanged);
 		this.thresholdBox.setValue(String.valueOf(this.breakThreshold));
 
 		int stepButtonWidth = 20;
@@ -123,7 +118,10 @@ public class ConfigScreen extends Screen {
 		int listBottom = this.height - LIST_BOTTOM_OFFSET;
 		this.list = new FavoriteList(this, this.width, listBottom - LIST_TOP, LIST_TOP, ITEM_HEIGHT);
 		this.addRenderableWidget(this.list);
-		this.applySearch("");
+		if (!this.searchText.isEmpty()) {
+			this.searchBox.setValue(this.searchText);
+		}
+		this.applySearch(this.searchText);
 
 		int buttonWidth = 100;
 		int buttonY = this.height - 30;
@@ -163,6 +161,32 @@ public class ConfigScreen extends Screen {
 		return this.sortByName
 			? Component.translatable("button.nlome.sort.az")
 			: Component.translatable("button.nlome.sort.none");
+	}
+
+	private void onSearchChanged(String filter) {
+		this.searchText = filter;
+		this.applySearch(filter);
+	}
+
+	private void onThresholdChanged(String text) {
+		if (text.isEmpty()) {
+			this.breakThreshold = THRESHOLD_MIN;
+			this.thresholdBox.setValue(String.valueOf(THRESHOLD_MIN));
+			return;
+		}
+
+		int parsed;
+		try {
+			parsed = Integer.parseInt(text);
+		} catch (NumberFormatException exception) {
+			return;
+		}
+
+		int clamped = Math.max(THRESHOLD_MIN, Math.min(THRESHOLD_MAX, parsed));
+		this.breakThreshold = clamped;
+		if (clamped != parsed) {
+			this.thresholdBox.setValue(String.valueOf(clamped));
+		}
 	}
 
 	private void applySearch(String filter) {
@@ -216,11 +240,13 @@ public class ConfigScreen extends Screen {
 				entries = this.enchantments.stream().sorted(this::compareByName).toList();
 			}
 
-			String query = filter.trim().toLowerCase();
+			String query = filter.trim().toLowerCase(Locale.ROOT);
 			for (Holder.Reference<Enchantment> holder : entries) {
 				String name = this.translatedNames.get(holder);
 				String id = holder.key().location().toString();
-				if (!query.isEmpty() && !name.toLowerCase().contains(query) && !id.toLowerCase().contains(query)) {
+				if (!query.isEmpty()
+					&& !name.toLowerCase(Locale.ROOT).contains(query)
+					&& !id.toLowerCase(Locale.ROOT).contains(query)) {
 					continue;
 				}
 

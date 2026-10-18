@@ -1,5 +1,6 @@
 package top.g2inp.protection;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -88,15 +89,10 @@ public final class ProtectionHandler {
 
 		int breaks = (data == null ? 0 : data.breaks()) + 1;
 		int breakThreshold = FavoritesManager.get().getBreakThreshold();
-		if (breaks >= breakThreshold) {
+		if (breaks > breakThreshold) {
 			villager.removeAttached(PROTECTION);
-			if (data != null) {
-				PROTECTED_STATIONS.remove(data.station());
-			}
-			Player player = villager.getTradingPlayer();
-			if (player instanceof ServerPlayer serverPlayer) {
-				serverPlayer.sendSystemMessage(Component.translatable("message.nlome.refreshed"));
-			}
+			unbindVillager(villager.getUUID());
+			ToastHelper.showRefreshed();
 			return false;
 		}
 
@@ -106,10 +102,10 @@ public final class ProtectionHandler {
 				.orElse(GlobalPos.of(serverLevel.dimension(), villager.blockPosition()))
 			: data.station();
 		villager.setAttached(PROTECTION, new ProtectionData(station, favoriteOffer.copy(), breaks));
-		PROTECTED_STATIONS.put(station, villager.getUUID());
+		bindStation(station, villager.getUUID());
 		Player player = villager.getTradingPlayer();
 		if (player instanceof ServerPlayer) {
-			ToastHelper.showIntercepted(breaks, breakThreshold - 1);
+			ToastHelper.showIntercepted(breaks, breakThreshold);
 		}
 		return true;
 	}
@@ -128,7 +124,7 @@ public final class ProtectionHandler {
 					.map(site -> GlobalPos.of(site.dimension(), site.pos()))
 					.orElse(GlobalPos.of(serverLevel.dimension(), villager.blockPosition()));
 				villager.setAttached(PROTECTION, new ProtectionData(station, favoriteOffer.copy(), 0));
-				PROTECTED_STATIONS.put(station, villager.getUUID());
+				bindStation(station, villager.getUUID());
 			} else if (!favoritedEnchantment(favoriteOffer.getResult(), favorites)
 				.equals(favoritedEnchantment(data.savedOffer().getResult(), favorites))) {
 				villager.setAttached(PROTECTION, new ProtectionData(data.station(), favoriteOffer.copy(), data.breaks()));
@@ -147,64 +143,97 @@ public final class ProtectionHandler {
 		}
 
 		GlobalPos station = GlobalPos.of(serverLevel.dimension(), pos.immutable());
-
-		UUID protectedVillagerUuid = PROTECTED_STATIONS.remove(station);
-		if (protectedVillagerUuid != null) {
-			if (serverLevel.getEntity(protectedVillagerUuid) instanceof Villager villager) {
-				ProtectionData data = villager.getAttached(PROTECTION);
-				MerchantOffer favoriteOffer = findFavoritedOffer(villager);
-				if (favoriteOffer == null) {
-					if (data != null) {
-						villager.removeAttached(PROTECTION);
-					}
-					return;
-				}
-
-				int breakThreshold = FavoritesManager.get().getBreakThreshold();
-				int breaks = (data == null ? 0 : data.breaks()) + 1;
-				if (breaks < breakThreshold) {
-					villager.setAttached(PROTECTION, new ProtectionData(station, favoriteOffer.copy(), breaks));
-					PROTECTED_STATIONS.put(station, villager.getUUID());
-					Component bookName = bookName(serverLevel, favoriteOffer);
-					serverPlayer.sendSystemMessage(Component.translatable("message.nlome.protected", bookName));
-					glowVillager(villager);
-				} else {
-					villager.removeAttached(PROTECTION);
-					villager.getBrain().eraseMemory(MemoryModuleType.JOB_SITE);
-					villager.setVillagerData(villager.getVillagerData()
-						.withProfession(serverLevel.registryAccess(), VillagerProfession.NONE));
-					villager.refreshBrain(serverLevel);
-					serverPlayer.sendSystemMessage(Component.translatable("message.nlome.refreshed"));
-					glowVillager(villager);
-				}
-			}
-
-			return;
+		Villager bound = loadedVillager(serverLevel, PROTECTED_STATIONS.get(station));
+		List<Villager> candidates = jobSiteOwners(serverLevel, pos);
+		if (bound != null && !candidates.contains(bound)) {
+			candidates.add(bound);
 		}
 
-		List<Villager> villagers = serverLevel.getEntities(
-			EntityTypeTest.forClass(Villager.class),
-			new AABB(pos).inflate(SEARCH_RADIUS),
-			villager -> villager.getBrain().getMemory(MemoryModuleType.JOB_SITE)
-				.map(jobSite -> jobSite.dimension().equals(serverLevel.dimension()) && jobSite.pos().equals(pos))
-				.orElse(false));
-		if (villagers.isEmpty()) {
-			return;
-		}
-
-		for (Villager villager : villagers) {
-			MerchantOffer favoriteOffer = findFavoritedOffer(villager);
-			if (favoriteOffer == null) {
+		// 锁定只看村民本身：交易过且报价里仍有收藏书，与 Attachment/坐标绑定无关
+		for (Villager candidate : candidates) {
+			MerchantOffer lockedOffer = findFavoritedOffer(candidate);
+			if (lockedOffer == null || candidate.getVillagerXp() <= 0) {
 				continue;
 			}
 
-			villager.setAttached(PROTECTION, new ProtectionData(station, favoriteOffer.copy(), 0));
-			PROTECTED_STATIONS.put(station, villager.getUUID());
-			Component bookName = bookName(serverLevel, favoriteOffer);
-			serverPlayer.sendSystemMessage(Component.translatable("message.nlome.protected", bookName));
+			// 首次判定为锁定时补上保护状态，否则职业重置不会被 VillagerMixin 拦住
+			if (candidate.getAttached(PROTECTION) == null) {
+				candidate.setAttached(PROTECTION, new ProtectionData(station, lockedOffer.copy(), 0));
+				bindStation(station, candidate.getUUID());
+			}
+
+			serverPlayer.sendSystemMessage(Component.translatable("message.nlome.locked"));
+			glowVillager(candidate);
+			return;
+		}
+
+		Villager villager = firstWithFavoritedOffer(candidates);
+		MerchantOffer favoriteOffer = villager == null ? null : findFavoritedOffer(villager);
+		if (villager == null || favoriteOffer == null) {
+			PROTECTED_STATIONS.remove(station);
+			if (bound != null) {
+				bound.removeAttached(PROTECTION);
+			}
+			return;
+		}
+
+		ProtectionData data = villager.getAttached(PROTECTION);
+		boolean knownStation = data != null && station.equals(data.station());
+		int breaks = knownStation ? data.breaks() + 1 : (data == null ? 0 : data.breaks());
+		int breakThreshold = FavoritesManager.get().getBreakThreshold();
+		if (breaks >= breakThreshold) {
+			villager.removeAttached(PROTECTION);
+			unbindVillager(villager.getUUID());
+			villager.getBrain().eraseMemory(MemoryModuleType.JOB_SITE);
+			villager.setVillagerData(villager.getVillagerData()
+				.withProfession(serverLevel.registryAccess(), VillagerProfession.NONE));
+			villager.refreshBrain(serverLevel);
+			ToastHelper.showRefreshed();
 			glowVillager(villager);
 			return;
 		}
+
+		villager.setAttached(PROTECTION, new ProtectionData(station, favoriteOffer.copy(), breaks));
+		bindStation(station, villager.getUUID());
+		Component bookName = bookName(serverLevel, favoriteOffer);
+		serverPlayer.sendSystemMessage(Component.translatable("message.nlome.protected", bookName));
+		glowVillager(villager);
+	}
+
+	private static List<Villager> jobSiteOwners(ServerLevel level, BlockPos pos) {
+		return new ArrayList<>(level.getEntities(
+			EntityTypeTest.forClass(Villager.class),
+			new AABB(pos).inflate(SEARCH_RADIUS),
+			villager -> villager.getBrain().getMemory(MemoryModuleType.JOB_SITE)
+				.map(jobSite -> jobSite.dimension().equals(level.dimension()) && jobSite.pos().equals(pos))
+				.orElse(false)));
+	}
+
+	private static Villager firstWithFavoritedOffer(List<Villager> candidates) {
+		for (Villager candidate : candidates) {
+			if (findFavoritedOffer(candidate) != null) {
+				return candidate;
+			}
+		}
+
+		return null;
+	}
+
+	private static Villager loadedVillager(ServerLevel level, @Nullable UUID uuid) {
+		if (uuid == null) {
+			return null;
+		}
+
+		return level.getEntity(uuid) instanceof Villager villager ? villager : null;
+	}
+
+	private static void bindStation(GlobalPos station, UUID villagerUuid) {
+		unbindVillager(villagerUuid);
+		PROTECTED_STATIONS.put(station, villagerUuid);
+	}
+
+	private static void unbindVillager(UUID villagerUuid) {
+		PROTECTED_STATIONS.values().removeIf(villagerUuid::equals);
 	}
 
 	private static Component bookName(ServerLevel serverLevel, MerchantOffer favoriteOffer) {
