@@ -33,7 +33,7 @@
 ./gradlew build
 ```
 
-产物位于 `build/libs/nlome-1.0.1.jar`。
+产物位于 `build/libs/nlome-1.0.2.jar`。
 
 ## 许可
 

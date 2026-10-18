@@ -25,7 +25,7 @@ When making a change that applies to multiple versions, cherry-pick or replicate
 ./gradlew build
 ```
 
-Artifact: `build/libs/nlome-1.0.1.jar`. Java 21 target. Uses Fabric Loom with official Mojang mappings.
+Artifact: `build/libs/nlome-1.0.2.jar`. Java 21 target. Uses Fabric Loom with official Mojang mappings.
 
 ## Architecture
 
